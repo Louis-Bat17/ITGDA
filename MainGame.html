@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* Create a CSS animation for shaking */
+        @keyframes shake {
+        0% { transform: translate(0, 0); }
+        10%, 30%, 50%, 70%, 90% { transform: translate(-5px, 0); }
+        20%, 40%, 60%, 80% { transform: translate(5px, 0); }
+        100% { transform: translate(0, 0); }
+        }
+        /* Apply the shake animation to an element with the "shake" class */
+        .shake {
+        animation: shake 0.5s;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser-arcade-physics.min.js"></script>
+</head>
+<body>
+    <script>
+    function isMobile() {
+        return /Mobi|Android/i.test(navigator.userAgent);
+    }  
+    // Run different scripts based on device type
+    if (isMobile()) {
+        // Load the mobile-specific JavaScript file
+        var script = document.createElement('script');
+        script.src = 'TestEngineMobile.js';
+        document.body.appendChild(script);
+    } else {
+        // Load the desktop-specific JavaScript file
+        var script = document.createElement('script');
+        script.src = 'TestEngineDesktop.js';
+        document.body.appendChild(script);
+    }
+</script>
+</body>
+</html>
