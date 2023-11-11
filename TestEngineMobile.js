@@ -31,10 +31,10 @@ var checkFlag = false;
 
 function preload() {
     // Load your assets, e.g., images, as needed
-    this.load.image('background', 'assets/BackgroundMain.png');
-    this.load.image('char', 'assets/myuniquechar.png');
-    this.load.image('enemy', 'assets/enemy.png');
-    this.load.image('treasure', 'assets/treasure.png');
+    this.load.image('background', 'assets/BackgroundMain.png')
+    this.load.image('char', 'assets/MainChar.png');
+    this.load.image('enemy', 'assets/EnemySprite.png');
+    this.load.image('treasure', 'assets/TreasureChest.png')
 }
 
 function create() {
