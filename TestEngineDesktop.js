@@ -59,6 +59,8 @@ function create() {
         var enemy = this.physics.add.sprite(startX + (i * 200), window.innerHeight/2, 'enemy');
         enemy.setCollideWorldBounds(true);
         enemy.setScale(0.5);
+        var enemySpeed = Phaser.Math.Between(2, 10) * 0.1;
+        enemy.speed = enemySpeed;
         enemiesGroup.add(enemy);
     }
 
@@ -96,15 +98,16 @@ function update() {
 
     // Update each enemy's vertical movement individually
     enemiesGroup.children.iterate(function (enemy) {
-        enemy.y += enemySpeed;
+        enemy.y += enemy.speed; // Use the assigned speed
 
         if (enemy.y <= minY || enemy.y >= maxY) {
-            enemySpeed *= -1;
+            enemy.speed *= -1;
         }
     });
 }
 
 function handleCollision(character, object) {
+    // add array to have random messages pop up
     if (object.texture.key === "treasure") {
         alert("You have found the treasure. You Won!");
     } else if (object.texture.key === "enemy") {
