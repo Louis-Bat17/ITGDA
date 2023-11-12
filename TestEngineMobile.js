@@ -19,13 +19,8 @@ var game = new Phaser.Game(config);
 var character;
 var cursors;
 var enemy;
-var minY; // Minimum Y position for enemy
-var maxY; // Maximum Y position for enemy
-var enemySpeed; // Adjust the speed based on screen height
-var enemy2;
-var enemySpeed2; // Adjust the speed based on screen height
-var enemy3;
-var enemySpeed3; // Adjust the speed based on screen height
+var minY;
+var maxY; 
 var treasure;
 var checkFlag = false;
 
@@ -50,36 +45,27 @@ function create() {
 
     minY = 110;
     maxY = window.innerHeight - 110;
+    enemiesGroup = this.physics.add.group();
 
-    // Calculate enemy speed based on screen height
-    enemySpeed = window.innerHeight / 300;
-    enemy = this.physics.add.sprite(window.innerWidth / 4, Phaser.Math.Between(minY, maxY), 'enemy');
-    enemy.setCollideWorldBounds(true);
-    enemy.setScale(0.5);
-
-    // Calculate enemy2 speed based on screen height
-    enemySpeed2 = window.innerHeight / 200;
-    enemy2 = this.physics.add.sprite(window.innerWidth / 2, Phaser.Math.Between(minY, maxY), 'enemy');
-    enemy2.setCollideWorldBounds(true);
-    enemy2.setScale(0.5);
-
-    // Calculate enemy3 speed based on screen height
-    enemySpeed3 = window.innerHeight / 200;
-    enemy3 = this.physics.add.sprite(window.innerWidth / 2 + 200, Phaser.Math.Between(minY, maxY), 'enemy');
-    enemy3.setCollideWorldBounds(true);
-    enemy3.setScale(0.5);
+    // Create 6 enemies and add them to the group
+    for (var i = 0; i < 5; i++) {
+        var enemy = this.physics.add.sprite((i + 1) * (window.innerWidth / 6), window.innerHeight / 2, 'enemy');
+        enemy.setCollideWorldBounds(true);
+        enemy.setScale(0.5);
+        var enemySpeed = Phaser.Math.Between(50, 80) * 0.1; // Speed needs to be more because of the screen length
+        enemy.speed = enemySpeed;
+        enemiesGroup.add(enemy);
+    }
 
     treasure = this.physics.add.sprite(window.innerWidth - 20, window.innerHeight / 2, 'treasure');
     treasure.setCollideWorldBounds(true);
     treasure.setScale(0.5);
 
     character.setSize(30, 50);
-    enemy.setSize(30, 50);
-    enemy2.setSize(30, 30);
-    enemy3.setSize(30, 30);
 
     cursors = this.input.keyboard.createCursorKeys();
-    this.physics.add.collider(character, [enemy, enemy2, enemy3, treasure], handleCollision, null, this);
+    this.physics.add.collider(character, enemiesGroup, handleCollision, null, this);
+    this.physics.add.collider(character, treasure, handleCollision, null, this);
 }
 
 function update() {
@@ -99,54 +85,36 @@ function update() {
         }
     }
 
-    enemy.y += enemySpeed;
-    if (enemy.y <= minY || enemy.y >= maxY) {
-        enemySpeed *= -1;
-    }
+    enemiesGroup.children.iterate(function (enemy) {
+        enemy.y += enemy.speed; // Use the assigned speed
 
-    enemy2.y += enemySpeed2;
-    if (enemy2.y <= minY || enemy2.y >= maxY) {
-        enemySpeed2 *= -1;
-    }
-
-    enemy3.y += enemySpeed3;
-    if (enemy3.y <= minY || enemy3.y >= maxY) {
-        enemySpeed3 *= -1;
-    }
+        if (enemy.y <= minY || enemy.y >= maxY) {
+            enemy.speed *= -1;
+        }
+    });
 }
 
-function handleCollision(character, enemy) {
-    const distance = Phaser.Math.Distance.Between(
-        character.x, character.y,
-        enemy.x, enemy.y
-    );
-    const collisionThreshold = 100;
-    var message = enemy.texture.key;
-    if (message == "treasure") {
-        message = "You have found the " + message + ". You Won!";
-    } else if (message == "enemy") {
-        message = "Game Over, the " + message + " got you";
+function handleCollision(character, object) {
+    if (object.texture.key === "treasure") {
+        alert("You have found the treasure. You Won!");
+    } else if (object.texture.key === "enemy") {
+        alert("Game Over, the enemy got you");
     }
-    if (distance < collisionThreshold) {
-        shakePage();
-        if (checkFlag == false) {
-            alert(message);
-            checkFlag = true;
-        }
+
+    shakePage();
+
+    if (!checkFlag) {
+        checkFlag = true;
         this.physics.pause();
-        setTimeout(function() {
+        setTimeout(function () {
             resetGame();
         }, 500);
-        return true;
     }
-    return false;
 }
 
 function resetGame() {
     character.destroy();
-    enemy.destroy();
-    enemy2.destroy();
-    enemy3.destroy();
+    enemiesGroup.destroy(true);
     treasure.destroy();
     window.location.reload();
 }
