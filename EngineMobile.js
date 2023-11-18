@@ -1,7 +1,11 @@
+/*  
+    This is the work of Louis Oosthuizen - PSDB2NXX4
+*/
+
 var config = {
     type: Phaser.AUTO,
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: window.innerWidth, // Use the full width of the mobile screen
+    height: window.innerHeight, // Use the full height of the mobile screen
     physics: {
         default: 'arcade',
         arcade: {
@@ -18,10 +22,9 @@ var config = {
 var game = new Phaser.Game(config);
 var character;
 var cursors;
-var enemiesGroup;
-var minY; 
-var maxY;
-var enemySpeed = 0.5;
+var enemy;
+var minY;
+var maxY; 
 var treasure;
 var checkFlag = false;
 
@@ -37,26 +40,23 @@ function create() {
     // Manage on create function and load in sprites
     var backgroundImage = this.add.image(0, 0, 'background');
     backgroundImage.setOrigin(0, 0);
-    backgroundImage.displayWidth = this.sys.game.config.width;
-    backgroundImage.displayHeight = this.sys.game.config.height;
+    backgroundImage.displayWidth = window.innerWidth;
+    backgroundImage.displayHeight = window.innerHeight;
 
-    character = this.physics.add.sprite(20, config.height / 2, 'char');
+    character = this.physics.add.sprite(20, window.innerHeight / 2, 'char');
     character.setCollideWorldBounds(true);
     character.setScale(0.5);
 
     minY = 110;
-    maxY = config.height - 110;
+    maxY = window.innerHeight - 110;
     enemiesGroup = this.physics.add.group();
 
-    // Calculate the starting X position for the first enemy to be in the middle
-    var startX = window.innerWidth / 6;
-
-    // Create 6 enemies and add them to the group
-    for (var i = 0; i < 6; i++) {
-        var enemy = this.physics.add.sprite(startX + (i * 200), window.innerHeight/2, 'enemy');
+    // Create 5 enemies and add them to the group (not 6 so to fit)
+    for (var i = 0; i < 5; i++) {
+        var enemy = this.physics.add.sprite((i + 1) * (window.innerWidth / 6), window.innerHeight / 2, 'enemy');
         enemy.setCollideWorldBounds(true);
         enemy.setScale(0.5);
-        var enemySpeed = Phaser.Math.Between(2, 10) * 0.1;
+        var enemySpeed = Phaser.Math.Between(50, 80) * 0.1; // Speed needs to be more because of the screen length
         enemy.speed = enemySpeed;
         enemiesGroup.add(enemy);
     }
@@ -64,15 +64,12 @@ function create() {
     treasure = this.physics.add.sprite(window.innerWidth - 20, window.innerHeight / 2, 'treasure');
     treasure.setCollideWorldBounds(true);
     treasure.setScale(0.5);
+
     character.setSize(30, 50);
-    enemiesGroup.children.iterate(function (enemy) {
-        enemy.setSize(30, 50);
-    });
 
     cursors = this.input.keyboard.createCursorKeys();
-
-    // Add collision between character and enemy group with a callback function
-    this.physics.add.collider(character, [enemiesGroup, treasure], handleCollision, null, this);
+    this.physics.add.collider(character, enemiesGroup, handleCollision, null, this);
+    this.physics.add.collider(character, treasure, handleCollision, null, this);
 }
 
 function update() {
@@ -86,16 +83,15 @@ function update() {
     }
 
     if (this.input.pointer1.isDown) {
-        if (this.input.pointer1.x < config.width / 2) {
+        if (this.input.pointer1.x < window.innerWidth / 2) {
             character.setVelocityX(-200);
         } else {
             character.setVelocityX(200);
         }
     }
 
-    // Update each enemy's vertical movement individually
     enemiesGroup.children.iterate(function (enemy) {
-        enemy.y += enemy.speed; // Use the assigned speed
+        enemy.y += enemy.speed; // get speed from on create
 
         if (enemy.y <= minY || enemy.y >= maxY) {
             enemy.speed *= -1;
@@ -112,7 +108,7 @@ function handleCollision(character, object) {
     }
 
     shakePage();
-    
+
     if (!checkFlag) {
         checkFlag = true;
         this.physics.pause();

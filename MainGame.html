@@ -18,6 +18,9 @@
 </head>
 <body>
     <script>
+        /*
+            This is the work of Louis Oosthuizen - PSDB2NXX4
+        */
     function isMobile() {
         return /Mobi|Android/i.test(navigator.userAgent);
     }  
@@ -25,12 +28,12 @@
     if (isMobile()) {
         // Load the mobile-specific JavaScript file
         var script = document.createElement('script');
-        script.src = 'TestEngineMobile.js';
+        script.src = 'EngineMobile.js';
         document.body.appendChild(script);
     } else {
         // Load the desktop-specific JavaScript file
         var script = document.createElement('script');
-        script.src = 'TestEngineDesktop.js';
+        script.src = 'EngineDesktop.js';
         document.body.appendChild(script);
     }
 </script>
