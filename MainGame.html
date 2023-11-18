@@ -2,14 +2,14 @@
 <html>
 <head>
     <style>
-        /* Create a CSS animation for shaking */
+        /* Styling which manages screen shaking */
         @keyframes shake {
         0% { transform: translate(0, 0); }
         10%, 30%, 50%, 70%, 90% { transform: translate(-5px, 0); }
         20%, 40%, 60%, 80% { transform: translate(5px, 0); }
         100% { transform: translate(0, 0); }
         }
-        /* Apply the shake animation to an element with the "shake" class */
+        /* Apply the shake animation to an element with the "shake" class - to be called */
         .shake {
         animation: shake 0.5s;
         }
@@ -21,7 +21,7 @@
     function isMobile() {
         return /Mobi|Android/i.test(navigator.userAgent);
     }  
-    // Run different scripts based on device type
+    // If mobile, run mobile js otherwise desktop
     if (isMobile()) {
         // Load the mobile-specific JavaScript file
         var script = document.createElement('script');

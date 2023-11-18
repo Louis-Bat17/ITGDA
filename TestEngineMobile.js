@@ -14,7 +14,7 @@ var config = {
         update: update
     }
 };
-
+// set variables and above setup the config
 var game = new Phaser.Game(config);
 var character;
 var cursors;
@@ -25,7 +25,7 @@ var treasure;
 var checkFlag = false;
 
 function preload() {
-    // Load your assets, e.g., images, as needed
+    // Load of all associated assets from assets folder
     this.load.image('background', 'assets/BackgroundMain.png')
     this.load.image('char', 'assets/MainChar.png');
     this.load.image('enemy', 'assets/EnemySprite.png');
@@ -33,7 +33,7 @@ function preload() {
 }
 
 function create() {
-    // Set the background image to cover the entire game screen
+    // Manage on create function and load in sprites
     var backgroundImage = this.add.image(0, 0, 'background');
     backgroundImage.setOrigin(0, 0);
     backgroundImage.displayWidth = window.innerWidth;
@@ -47,7 +47,7 @@ function create() {
     maxY = window.innerHeight - 110;
     enemiesGroup = this.physics.add.group();
 
-    // Create 6 enemies and add them to the group
+    // Create 5 enemies and add them to the group (not 6 so to fit)
     for (var i = 0; i < 5; i++) {
         var enemy = this.physics.add.sprite((i + 1) * (window.innerWidth / 6), window.innerHeight / 2, 'enemy');
         enemy.setCollideWorldBounds(true);
@@ -69,6 +69,7 @@ function create() {
 }
 
 function update() {
+    // On update and include input
     if (cursors.left.isDown) {
         character.setVelocityX(-200);
     } else if (cursors.right.isDown) {
@@ -86,7 +87,7 @@ function update() {
     }
 
     enemiesGroup.children.iterate(function (enemy) {
-        enemy.y += enemy.speed; // Use the assigned speed
+        enemy.y += enemy.speed; // get speed from on create
 
         if (enemy.y <= minY || enemy.y >= maxY) {
             enemy.speed *= -1;
@@ -95,6 +96,7 @@ function update() {
 }
 
 function handleCollision(character, object) {
+    // on collision with a sprite
     if (object.texture.key === "treasure") {
         alert("You have found the treasure. You Won!");
     } else if (object.texture.key === "enemy") {
@@ -113,6 +115,7 @@ function handleCollision(character, object) {
 }
 
 function resetGame() {
+    // reset game on success or failure
     character.destroy();
     enemiesGroup.destroy(true);
     treasure.destroy();
@@ -120,5 +123,6 @@ function resetGame() {
 }
 
 function shakePage() {
+    // shake if failure or success
     document.body.classList.add("shake");
 }

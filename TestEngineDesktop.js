@@ -14,18 +14,19 @@ var config = {
         update: update
     }
 };
-
+// set variables and above setup the config
 var game = new Phaser.Game(config);
 var character;
 var cursors;
 var enemiesGroup;
-var minY; // Minimum Y position for enemy
-var maxY; // Maximum Y position for enemy
-var enemySpeed = 0.5; // Adjust the speed as needed
+var minY; 
+var maxY;
+var enemySpeed = 0.5;
 var treasure;
 var checkFlag = false;
 
 function preload() {
+    // Load of all associated assets from assets folder
     this.load.image('background', 'assets/BackgroundMain.png')
     this.load.image('char', 'assets/MainChar.png');
     this.load.image('enemy', 'assets/EnemySprite.png');
@@ -33,6 +34,7 @@ function preload() {
 }
 
 function create() {
+    // Manage on create function and load in sprites
     var backgroundImage = this.add.image(0, 0, 'background');
     backgroundImage.setOrigin(0, 0);
     backgroundImage.displayWidth = this.sys.game.config.width;
@@ -44,12 +46,7 @@ function create() {
 
     minY = 110;
     maxY = config.height - 110;
-
-    // Create a group for the enemies
     enemiesGroup = this.physics.add.group();
-
-    // Calculate the total width of all enemies, with some spacing
-    var totalEnemyWidth = 6 * 50 + 5 * 10; // (number of enemies * width) + (number of spaces * spacing)
 
     // Calculate the starting X position for the first enemy to be in the middle
     var startX = window.innerWidth / 6;
@@ -67,7 +64,6 @@ function create() {
     treasure = this.physics.add.sprite(window.innerWidth - 20, window.innerHeight / 2, 'treasure');
     treasure.setCollideWorldBounds(true);
     treasure.setScale(0.5);
-
     character.setSize(30, 50);
     enemiesGroup.children.iterate(function (enemy) {
         enemy.setSize(30, 50);
@@ -80,6 +76,7 @@ function create() {
 }
 
 function update() {
+    // On update and include input
     if (cursors.left.isDown) {
         character.setVelocityX(-200);
     } else if (cursors.right.isDown) {
@@ -107,7 +104,7 @@ function update() {
 }
 
 function handleCollision(character, object) {
-    // add array to have random messages pop up
+    // on collision with a sprite
     if (object.texture.key === "treasure") {
         alert("You have found the treasure. You Won!");
     } else if (object.texture.key === "enemy") {
@@ -126,6 +123,7 @@ function handleCollision(character, object) {
 }
 
 function resetGame() {
+    // reset game on success or failure
     character.destroy();
     enemiesGroup.destroy(true);
     treasure.destroy();
@@ -133,5 +131,6 @@ function resetGame() {
 }
 
 function shakePage() {
+    // shake if failure or success
     document.body.classList.add("shake");
 }
